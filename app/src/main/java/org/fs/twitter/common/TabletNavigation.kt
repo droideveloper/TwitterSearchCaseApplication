@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.twitter.common.component.fragment
+package org.fs.twitter.common
 
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
-import org.fs.mvp.common.scope.ForFragment
-import org.fs.twitter.common.module.fragment.TweetListFragmentModule
-import org.fs.twitter.view.TweetListFragment
+import org.fs.mvp.common.BusManager
+import org.fs.mvp.common.NavigationType
+import org.fs.twitter.model.Tweet
+import org.fs.twitter.model.event.ShowTweetDetail
 
-@ForFragment
-@Subcomponent(modules = [TweetListFragmentModule::class])
-interface TweetListFragmentComponent: AndroidInjector<TweetListFragment> {
+class TabletNavigation: NavigationType<Tweet> {
 
-  @Subcomponent.Builder
-  abstract class Builder: AndroidInjector.Builder<TweetListFragment>()
+  override fun onSelectCategory(tweet: Tweet?) {
+    tweet?.let {
+      BusManager.send(ShowTweetDetail(it))
+    }
+  }
 }

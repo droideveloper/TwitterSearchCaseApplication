@@ -22,6 +22,7 @@ import org.fs.mvp.common.BusManager
 import org.fs.mvp.util.ObservableList
 import org.fs.twitter.model.Authorization
 import org.fs.twitter.model.Tweet
+import org.fs.twitter.model.event.RefreshSearchListEvent
 import org.fs.twitter.net.Endpoint
 import org.fs.twitter.util.EMPTY
 import org.fs.twitter.util.async
@@ -38,6 +39,8 @@ class TweetListFragmentPresenterImp(view: TweetListFragmentView,
 
   private val disposeBag = CompositeDisposable()
 
+  private var query: String = String.EMPTY
+
   override fun onCreate() {
     if (view.isAvailable()) {
       view.setUp()
@@ -47,7 +50,12 @@ class TweetListFragmentPresenterImp(view: TweetListFragmentView,
   override fun onStart() {
     if (view.isAvailable()) {
       val disposable = BusManager.add(Consumer { evt ->
-
+        if (evt is RefreshSearchListEvent) {
+          if (view.isAvailable()) {
+            dataSet.clear()
+            load(query, false)
+          }
+        }
       })
 
       disposeBag.add(disposable)
@@ -55,26 +63,39 @@ class TweetListFragmentPresenterImp(view: TweetListFragmentView,
       val observeQueryChanges = view.queryChanges()
         .map { it.trim() }
         .filter { it.length >= MIN_CHAR_COUNT }
-        .flatMap { endpoint.search(Authorization.create(it.toString()), it.toString()) }
-        .map { it.statuses ?: emptyList() }
-        .async(view)
-        .doOnSubscribe {
-          if (view.isAvailable()) {
-            dataSet.clear()
-          }
-        }
-        .subscribe({ array ->
-          if (view.isAvailable()) {
-            dataSet.addAll(array)
-          }
+        .subscribe({
+          dataSet.clear()
+          load(it.toString(), false)
         }, { error -> error.printStackTrace() })
 
       disposeBag.add(observeQueryChanges)
 
       val observeLoadMore = view.loadMore()
         .filter { it }
-        .map { dataSet.last().id?.toString() ?: String.EMPTY }
-        .flatMap { endpoint.loadMore(Authorization.create(view.query(), it), view.query(), it) }
+        .subscribe({ load(query, true) }, { error -> error.printStackTrace() })
+
+      disposeBag.add(observeLoadMore)
+
+      val observeSwipeRefresh = view.refreshes()
+        .filter { it }
+        .subscribe({
+          dataSet.clear()
+          load(query, false)
+        }, { error -> error.printStackTrace() })
+
+      disposeBag.add(observeSwipeRefresh)
+    }
+  }
+
+  override fun onStop() {
+    disposeBag.clear()
+  }
+
+  private fun load(query: String, loadMore: Boolean) {
+    this.query = query
+    if (loadMore) {
+      val since = dataSet.last().id?.toString() ?: String.EMPTY
+      val disposable = endpoint.loadMore(Authorization.create(query, since), query, since)
         .map { it.statuses ?: emptyList() }
         .async()
         .doOnSubscribe {
@@ -92,11 +113,19 @@ class TweetListFragmentPresenterImp(view: TweetListFragmentView,
           }
         }, { error -> error.printStackTrace() })
 
-      disposeBag.add(observeLoadMore)
-    }
-  }
+      disposeBag.add(disposable)
 
-  override fun onStop() {
-    disposeBag.clear()
+    } else {
+      val disposable = endpoint.search(Authorization.create(query), query)
+        .map { it.statuses ?: emptyList() }
+        .async(view)
+        .subscribe({ array ->
+          if (view.isAvailable()) {
+            dataSet.addAll(array)
+          }
+        }, { error -> error.printStackTrace() })
+
+      disposeBag.add(disposable)
+    }
   }
 }  

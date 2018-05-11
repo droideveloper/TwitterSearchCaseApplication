@@ -15,17 +15,62 @@
  */
 package org.fs.twitter.presenter
 
+import android.os.Bundle
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Consumer
 import org.fs.mvp.common.AbstractPresenter
+import org.fs.mvp.common.BusManager
+import org.fs.twitter.model.Tweet
+import org.fs.twitter.model.event.ShowTweetDetail
 import org.fs.twitter.view.TweetDetailFragmentView
 
 class TweetDetailFragmentPresenterImp(view: TweetDetailFragmentView)
   : AbstractPresenter<TweetDetailFragmentView>(view), TweetDetailFragmentPresenter {
 
+  companion object {
+    const val BUNDLE_ARGS_TWEET = "bundle.args.tweet"
+  }
+
+  private val disposeBag = CompositeDisposable()
+
+  private var tweet: Tweet? = null
+
+  override fun restoreState(restore: Bundle?) {
+    restore?.let {
+      if (it.containsKey(BUNDLE_ARGS_TWEET)) {
+        tweet = it.getParcelable(BUNDLE_ARGS_TWEET)
+      }
+    }
+  }
+
+  override fun storeState(store: Bundle?) {
+    store?.let { bag ->
+      tweet?.let {
+        bag.putParcelable(BUNDLE_ARGS_TWEET, it)
+      }
+    }
+  }
+
   override fun onStart() {
-    //TODO implement
+    if (view.isAvailable()) {
+
+      tweet?.let {
+        view.showDetail(it)
+      }
+
+      val disposable = BusManager.add(Consumer { evt ->
+        if (evt is ShowTweetDetail) {
+          if (view.isAvailable()) {
+            view.showDetail(evt.tweet)
+          }
+        }
+      })
+
+      disposeBag.add(disposable)
+    }
   }
 
   override fun onStop() {
-    //TODO implement
+    disposeBag.clear()
   }
 }  

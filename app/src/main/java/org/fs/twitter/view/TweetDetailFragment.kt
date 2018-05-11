@@ -19,11 +19,26 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import kotlinx.android.synthetic.main.view_tweet_detail_fragment.*
 import org.fs.mvp.core.AbstractFragment
 import org.fs.twitter.R
+import org.fs.twitter.model.Tweet
 import org.fs.twitter.presenter.TweetDetailFragmentPresenter
+import org.fs.twitter.presenter.TweetDetailFragmentPresenterImp
 
 class TweetDetailFragment : AbstractFragment<TweetDetailFragmentPresenter>(), TweetDetailFragmentView {
+
+  companion object {
+    fun create(tweet: Tweet): TweetDetailFragment {
+      val args = Bundle()
+      args.putParcelable(TweetDetailFragmentPresenterImp.BUNDLE_ARGS_TWEET, tweet)
+      val fragment = TweetDetailFragment()
+      fragment.arguments = args
+      return fragment
+    }
+  }
 
   override fun onCreateView(factory: LayoutInflater, parent: ViewGroup?, savedInstanceState: Bundle?): View? = factory.inflate(R.layout.view_tweet_detail_fragment, parent, false)
 
@@ -32,5 +47,29 @@ class TweetDetailFragment : AbstractFragment<TweetDetailFragmentPresenter>(), Tw
 
     presenter.restoreState(savedInstanceState ?: arguments)
     presenter.onCreate()
+  }
+
+  override fun showDetail(tweet: Tweet) {
+    viewTweetTitle.text = tweet.text
+    viewTweetTime.text = tweet.createdAt
+    val img = tweet.entities?.media?.last()
+    img?.let {
+      Glide.with(context)
+        .load(it.imageUrl)
+        .fitCenter()
+        .placeholder(R.drawable.list_item_decorator)
+        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+        .into(viewTweetImage)
+    }
+    if (img == null) {
+      Glide.clear(viewTweetImage)
+    }
+  }
+
+  override fun clearDetail() {
+    viewTweetTitle.text = null
+    viewTweetTime.text = null
+    Glide.clear(viewTweetImage)
+
   }
 }

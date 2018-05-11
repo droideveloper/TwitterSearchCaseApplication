@@ -16,9 +16,45 @@
 package org.fs.twitter.common.module
 
 import dagger.Module
+import dagger.Provides
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import org.fs.mvp.net.RxJava2CallAdaptorFactory
+import org.fs.mvp.net.converters.GsonConverterFactory
+import org.fs.twitter.BuildConfig
+import org.fs.twitter.common.component.activity.MainActivityComponent
+import org.fs.twitter.common.component.activity.TweetDetailActivityComponent
+import org.fs.twitter.common.component.fragment.TweetDetailFragmentComponent
+import org.fs.twitter.common.component.fragment.TweetListFragmentComponent
+import org.fs.twitter.net.Endpoint
+import retrofit2.Retrofit
+import javax.inject.Singleton
 
-@Module
+@Module(subcomponents = [
+  MainActivityComponent::class, TweetDetailActivityComponent::class,
+  TweetListFragmentComponent::class, TweetDetailFragmentComponent::class])
 class AppModule {
 
+  companion object {
+    private const val BASE_URL = "https://api.twitter.com/"
+  }
 
+  @Singleton @Provides fun provideOkHttp(): OkHttpClient {
+    val builder = OkHttpClient.Builder()
+    if (BuildConfig.DEBUG) {
+      val logger = HttpLoggingInterceptor()
+      logger.level = HttpLoggingInterceptor.Level.BODY
+      builder.addInterceptor(logger)
+    }
+    return builder.build()
+  }
+
+  @Singleton @Provides fun provideRetrofit(client: OkHttpClient): Retrofit = Retrofit.Builder()
+    .addCallAdapterFactory(RxJava2CallAdaptorFactory.create())
+    .addConverterFactory(GsonConverterFactory.create())
+    .client(client)
+    .baseUrl(BASE_URL)
+    .build()
+
+  @Singleton @Provides fun provideEndpoint(retrofit: Retrofit): Endpoint = retrofit.create(Endpoint::class.java)
 }

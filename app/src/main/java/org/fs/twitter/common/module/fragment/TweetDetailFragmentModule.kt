@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.twitter.common.component.fragment
+package org.fs.twitter.common.module.fragment
 
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
+import dagger.Module
+import dagger.Provides
 import org.fs.mvp.common.scope.ForFragment
-import org.fs.twitter.common.module.fragment.TweetListFragmentModule
-import org.fs.twitter.view.TweetListFragment
+import org.fs.twitter.presenter.TweetDetailFragmentPresenter
+import org.fs.twitter.presenter.TweetDetailFragmentPresenterImp
+import org.fs.twitter.view.TweetDetailFragment
+import org.fs.twitter.view.TweetDetailFragmentView
 
-@ForFragment
-@Subcomponent(modules = [TweetListFragmentModule::class])
-interface TweetListFragmentComponent: AndroidInjector<TweetListFragment> {
+@Module
+class TweetDetailFragmentModule {
 
-  @Subcomponent.Builder
-  abstract class Builder: AndroidInjector.Builder<TweetListFragment>()
+  @ForFragment @Provides fun provideTweetDetailFragmentView(fragment: TweetDetailFragment): TweetDetailFragmentView = fragment
+  @ForFragment @Provides fun provideTweetDetailFragmentPresenter(view: TweetDetailFragmentView): TweetDetailFragmentPresenter = TweetDetailFragmentPresenterImp(view)
+
 }

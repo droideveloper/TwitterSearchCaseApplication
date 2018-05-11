@@ -13,12 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.twitter.view
+package org.fs.twitter.common
 
-import org.fs.mvp.common.ViewType
+import android.app.Activity
+import android.content.Intent
+import org.fs.mvp.common.NavigationType
 import org.fs.twitter.model.Tweet
+import org.fs.twitter.presenter.TweetDetailActivityPresenterImp
+import org.fs.twitter.view.TweetDetailActivity
 
-interface TweetDetailFragmentView : ViewType {
-  fun showDetail(tweet: Tweet)
-  fun clearDetail()
+class HandsetNavigation(private val activtiy: Activity): NavigationType<Tweet> {
+
+  companion object {
+    const val REQUEST_CODE_DETAIL = 0x09
+  }
+
+  override fun onSelectCategory(tweet: Tweet?) {
+    val intent = Intent(activtiy, TweetDetailActivity::class.java)
+    intent.putExtra(TweetDetailActivityPresenterImp.BUNDLE_ARGS_TWEET, tweet)
+    activtiy.startActivityForResult(intent, REQUEST_CODE_DETAIL)
+  }
 }

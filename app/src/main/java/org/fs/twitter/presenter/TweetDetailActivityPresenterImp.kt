@@ -15,37 +15,55 @@
  */
 package org.fs.twitter.presenter
 
-import android.content.Intent
+import android.os.Bundle
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Consumer
 import org.fs.mvp.common.AbstractPresenter
-import org.fs.mvp.common.BusManager
-import org.fs.mvp.common.NavigationType
-import org.fs.mvp.common.ThreadManager
 import org.fs.twitter.model.Tweet
-import org.fs.twitter.model.event.RefreshSearchListEvent
-import org.fs.twitter.model.event.SelectedTweetEvent
-import org.fs.twitter.view.MainActivityView
+import org.fs.twitter.view.TweetDetailActivityView
 
-class MainActivityPresenterImp(view: MainActivityView,
-    val navigationType: NavigationType<Tweet>) :
-    AbstractPresenter<MainActivityView>(view), MainActivityPresenter {
+class TweetDetailActivityPresenterImp(view: TweetDetailActivityView)
+  : AbstractPresenter<TweetDetailActivityView>(view), TweetDetailActivityPresenter {
 
   companion object {
-    private const val DELAY_FOR_FRAGMENT_GET_AWAKE = 300L
+    const val BUNDLE_ARGS_TWEET = "bundle.args.tweet"
   }
 
   private val disposeBag = CompositeDisposable()
 
+  private var tweet: Tweet? = null
+
+  override fun restoreState(restore: Bundle?) {
+    restore?.let {
+      if(it.containsKey(BUNDLE_ARGS_TWEET)) {
+        tweet = it.getParcelable(BUNDLE_ARGS_TWEET)
+      }
+    }
+  }
+
+  override fun storeState(store: Bundle?) {
+    store?.let { bag ->
+      tweet?.let {
+        bag.putParcelable(BUNDLE_ARGS_TWEET, it)
+      }
+    }
+  }
+
+  override fun onCreate() {
+    if (view.isAvailable()) {
+      tweet?.let {
+        view.replace(it)
+      }
+    }
+  }
+
   override fun onStart() {
     if (view.isAvailable()) {
-      val disposable = BusManager.add(Consumer { evt ->
-        if (evt is SelectedTweetEvent) {
+      val disposable = view.navigationClick()
+        .subscribe {
           if (view.isAvailable()) {
-            navigationType.onSelectCategory(evt.tweet)
+            view.finish()
           }
         }
-      })
 
       disposeBag.add(disposable)
     }
@@ -59,11 +77,5 @@ class MainActivityPresenterImp(view: MainActivityView,
     if (view.isAvailable()) {
       view.finish()
     }
-  }
-
-  override fun activityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    ThreadManager.runOnUiThreadDelayed(Runnable {
-      BusManager.send(RefreshSearchListEvent())
-    }, DELAY_FOR_FRAGMENT_GET_AWAKE)
   }
 }  

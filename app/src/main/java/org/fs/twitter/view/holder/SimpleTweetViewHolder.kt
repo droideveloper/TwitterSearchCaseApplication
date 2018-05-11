@@ -29,6 +29,7 @@ class SimpleTweetViewHolder(view: View) : BaseTweetViewHolder(view) {
   private val disposeBag = CompositeDisposable()
 
   override fun onBindView(entity: Tweet?) {
+    super.onBindView(entity)
     entity?.let {
       itemView.viewTweetTitle.text = it.text
       itemView.viewTweetTime.text = it.createdAt

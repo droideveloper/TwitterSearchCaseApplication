@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.twitter.common.component.fragment
+package org.fs.twitter.common.component.activity
 
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
-import org.fs.mvp.common.scope.ForFragment
-import org.fs.twitter.common.module.fragment.TweetListFragmentModule
-import org.fs.twitter.view.TweetListFragment
+import org.fs.mvp.common.scope.ForActivity
+import org.fs.twitter.common.module.activity.MainActivityModule
+import org.fs.twitter.view.MainActivity
 
-@ForFragment
-@Subcomponent(modules = [TweetListFragmentModule::class])
-interface TweetListFragmentComponent: AndroidInjector<TweetListFragment> {
+@ForActivity
+@Subcomponent(modules = [MainActivityModule::class])
+interface MainActivityComponent: AndroidInjector<MainActivity> {
 
   @Subcomponent.Builder
-  abstract class Builder: AndroidInjector.Builder<TweetListFragment>()
+  abstract class Builder: AndroidInjector.Builder<MainActivity>()
 }

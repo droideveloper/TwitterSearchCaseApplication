@@ -22,6 +22,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.view_imaged_tweet_item.view.*
 import org.fs.mvp.common.BusManager
+import org.fs.twitter.R
 import org.fs.twitter.common.BaseTweetViewHolder
 import org.fs.twitter.model.Tweet
 import org.fs.twitter.model.event.SelectedTweetEvent
@@ -36,6 +37,7 @@ class ImagedTweetViewHolder(view: View) : BaseTweetViewHolder(view) {
   private val disposeBag = CompositeDisposable()
 
   override fun onBindView(entity: Tweet?) {
+    super.onBindView(entity)
     entity?.let {
       itemView.viewTweetTitle.text = it.text
       itemView.viewTweetTime.text = it.createdAt
@@ -45,7 +47,8 @@ class ImagedTweetViewHolder(view: View) : BaseTweetViewHolder(view) {
         first?.let { img ->
             Glide.with(itemView.context)
               .load(img.imageUrl)
-              .centerCrop()
+              .fitCenter()
+              .placeholder(R.drawable.list_item_decorator)
               .diskCacheStrategy(DiskCacheStrategy.SOURCE)
               .into(itemView.viewTweetImage)
 

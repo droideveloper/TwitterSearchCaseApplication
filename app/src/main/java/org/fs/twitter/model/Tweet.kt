@@ -39,6 +39,10 @@ open class Tweet private constructor() : AbstractEntity() {
     if (hasId) {
       id = input?.readLong()
     }
+    val hasText = input?.readInt() == 1
+    if (hasText) {
+      text = input?.readString()
+    }
     val hasUser = input?.readInt() == 1
     if (hasUser) {
       user = input?.readParcelable(User::class.java.classLoader)
@@ -63,6 +67,11 @@ open class Tweet private constructor() : AbstractEntity() {
     out?.writeInt(if (hasId) 1 else 0)
     id?.let {
       out?.writeLong(it)
+    }
+    val hasText = !TextUtils.isEmpty(text)
+    out?.writeInt(if (hasText) 1 else 0)
+    if (hasText) {
+      out?.writeString(text)
     }
     val hasUser = user != null
     out?.writeInt(if (hasUser) 1 else 0)

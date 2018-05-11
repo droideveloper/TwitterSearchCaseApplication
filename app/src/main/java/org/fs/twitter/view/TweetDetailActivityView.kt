@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.twitter.common.component.fragment
+package org.fs.twitter.view
 
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
-import org.fs.mvp.common.scope.ForFragment
-import org.fs.twitter.common.module.fragment.TweetListFragmentModule
-import org.fs.twitter.view.TweetListFragment
+import android.view.View
+import io.reactivex.Observable
+import org.fs.mvp.common.ViewType
+import org.fs.twitter.model.Tweet
 
-@ForFragment
-@Subcomponent(modules = [TweetListFragmentModule::class])
-interface TweetListFragmentComponent: AndroidInjector<TweetListFragment> {
+interface TweetDetailActivityView : ViewType {
 
-  @Subcomponent.Builder
-  abstract class Builder: AndroidInjector.Builder<TweetListFragment>()
+  fun replace(tweet: Tweet)
+  fun navigationClick(): Observable<View>
 }

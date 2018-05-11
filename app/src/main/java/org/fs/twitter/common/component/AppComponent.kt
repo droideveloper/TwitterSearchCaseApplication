@@ -23,11 +23,13 @@ import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 import dagger.android.support.AndroidSupportInjectionModule
 import org.fs.twitter.common.module.AppModule
+import org.fs.twitter.common.module.activity.ActivityBuilder
 import org.fs.twitter.common.module.fragment.FragmentBuilder
 import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [AndroidInjectionModule::class, AndroidSupportInjectionModule::class, AppModule::class,
+  ActivityBuilder::class,
   FragmentBuilder::class])
 interface AppComponent: AndroidInjector<DaggerApplication> {
 

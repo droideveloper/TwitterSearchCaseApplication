@@ -17,8 +17,9 @@ package org.fs.twitter
 
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
+import org.fs.twitter.common.component.DaggerAppComponent
 
 class TwitterSearchCaseApplication: DaggerApplication() {
 
-  override fun applicationInjector(): AndroidInjector<out DaggerApplication> = throw RuntimeException("problem generation dagget app")
+  override fun applicationInjector(): AndroidInjector<out DaggerApplication> = DaggerAppComponent.builder().application(this).build()
 }
