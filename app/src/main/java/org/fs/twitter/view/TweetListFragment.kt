@@ -16,14 +16,26 @@
 package org.fs.twitter.view
 
 import android.os.Bundle
+import android.support.v4.content.res.ResourcesCompat
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.reactivex.Observable
+import kotlinx.android.synthetic.main.view_tweet_list_fragment.*
 import org.fs.mvp.core.AbstractFragment
 import org.fs.twitter.R
 import org.fs.twitter.presenter.TweetListFragmentPresenter
+import org.fs.uibinding.v4.util.refreshes
+import org.fs.uibinding.v7.util.loadMore
+import org.fs.uibinding.v7.util.queryChanges
+import javax.inject.Inject
 
 class TweetListFragment : AbstractFragment<TweetListFragmentPresenter>(), TweetListFragmentView {
+
+  @Inject lateinit var layoutManager: RecyclerView.LayoutManager
+  @Inject lateinit var adapter: RecyclerView.Adapter<*>
 
   override fun onCreateView(factory: LayoutInflater, parent: ViewGroup?, savedInstanceState: Bundle?): View? = factory.inflate(R.layout.view_tweet_list_fragment, parent, false)
 
@@ -33,4 +45,33 @@ class TweetListFragment : AbstractFragment<TweetListFragmentPresenter>(), TweetL
     presenter.restoreState(savedInstanceState ?: arguments)
     presenter.onCreate()
   }
+
+  override fun setUp() {
+    viewSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorAccent)
+    // set up recycler
+    val drawable = ResourcesCompat.getDrawable(resources, R.drawable.list_item_decorator, context?.theme)
+    if (drawable != null) {
+      val listDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+      viewRecycler.addItemDecoration(listDecorator)
+    }
+    // set up other pieces
+    viewRecycler.setHasFixedSize(true)
+    viewRecycler.isDrawingCacheEnabled = true
+    viewRecycler.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH
+    viewRecycler.adapter = adapter
+    viewRecycler.layoutManager = layoutManager
+  }
+
+  override fun showProgress() {
+    viewSwipeRefreshLayout.isRefreshing = true
+  }
+
+  override fun hideProgress() {
+    viewSwipeRefreshLayout.isRefreshing = false
+  }
+
+  override fun query(): String = viewSearch.query.toString().trim()
+  override fun loadMore(): Observable<Boolean> = viewRecycler.loadMore()
+  override fun refreshes(): Observable<Boolean> = viewSwipeRefreshLayout.refreshes()
+  override fun queryChanges(): Observable<CharSequence> = viewSearch.queryChanges()
 }

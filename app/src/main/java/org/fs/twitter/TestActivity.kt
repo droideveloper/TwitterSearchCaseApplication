@@ -19,15 +19,14 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.FrameLayout
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.fs.mvp.net.RxJava2CallAdaptorFactory
 import org.fs.mvp.net.converters.GsonConverterFactory
 import org.fs.twitter.model.Authorization
 import org.fs.twitter.net.Endpoint
+import org.fs.twitter.util.async
 import retrofit2.Retrofit
 
 class TestActivity: AppCompatActivity() {
@@ -52,14 +51,17 @@ class TestActivity: AppCompatActivity() {
       .addConverterFactory(GsonConverterFactory.create())
       .build()
 
-    val lang = "en"
     val query = "nasa"
 
     val endpoint = retrofit.create(Endpoint::class.java)
-    val disposable = endpoint.search(Authorization(query, lang), lang, Uri.encode(query))
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({  }, { it.printStackTrace() })
+    val disposable = endpoint.loadMore(Authorization.create(query, "995013571133300736"), Uri.encode(query), "995013571133300736")
+      .async()
+      .subscribe({
+        val statustes = it.statuses
+        if (statustes != null) {
+
+        }
+      }, { it.printStackTrace() })
 
     disposeBag.add(disposable)
 

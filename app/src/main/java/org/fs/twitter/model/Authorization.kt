@@ -18,11 +18,10 @@ package org.fs.twitter.model
 import android.net.Uri
 import org.fs.twitter.util.*
 
-class Authorization public constructor(query: String = String.EMPTY, lang: String = "en") {
+class Authorization private constructor() {
 
   companion object {
-    const val HTTP_METHOD_GET = "GET"
-    const val HTTP_METHOD_POST = "POST"
+    private const val HTTP_METHOD_GET = "GET"
 
     // twitter api values
     private const val TWITTER_CONSUMER_KEY = "S97HvOn9Rm5BNES72C7eLGPsG"
@@ -38,34 +37,56 @@ class Authorization public constructor(query: String = String.EMPTY, lang: Strin
     private const val OAUTH_TOKEN = "oauth_token"
     private const val LANG = "lang"
     private const val RESULT_TYPE = "result_type"
+    private const val SINCE_ID = "since_id"
     private const val QUERY = "q"
 
+    private const val DEFAULT_LANG = "en"
     private const val OAUTH_SIGNATURE = "oauth_signature"
     private const val OAUTH_SIGNATURE_METHOD_VALUE = "HMAC-SHA1"
     private const val RESULT_TYPE_VALUE = "mixed"
 
-    private fun toParamString(lang: String, query: String, nonce: String, timeStamp: String): String = "$LANG=$lang" +
-      "&$OAUTH_CONSUMER_KEY=$TWITTER_CONSUMER_KEY" +
+    private fun toParamString(query: String, nonce: String, timeStamp: String): String =
+      "$OAUTH_CONSUMER_KEY=$TWITTER_CONSUMER_KEY" +
       "&$OAUTH_NONCE=$nonce" +
       "&$OAUTH_SIGNATURE_METHOD=$OAUTH_SIGNATURE_METHOD_VALUE" +
       "&$OAUTH_TIMESTAMP=$timeStamp" +
       "&$OAUTH_TOKEN=${Uri.parse(TWITTER_ACCESS_TOKEN)}" +
       "&$OAUTH_VERSION=1.0" +
-      "&$QUERY=${Uri.encode(query)}" +
-      "&$RESULT_TYPE=$RESULT_TYPE_VALUE"
+      "&$QUERY=${Uri.encode(query)}"
+
+    private fun toParamString(query: String, since_id: String, nonce: String, timeStamp: String): String =
+        "$OAUTH_CONSUMER_KEY=$TWITTER_CONSUMER_KEY" +
+        "&$OAUTH_NONCE=$nonce" +
+        "&$OAUTH_SIGNATURE_METHOD=$OAUTH_SIGNATURE_METHOD_VALUE" +
+        "&$OAUTH_TIMESTAMP=$timeStamp" +
+        "&$OAUTH_TOKEN=${Uri.parse(TWITTER_ACCESS_TOKEN)}" +
+        "&$OAUTH_VERSION=1.0" +
+        "&$QUERY=${Uri.encode(query)}" +
+        "&$SINCE_ID=$since_id"
+
+
+    fun create(query: String = String.EMPTY) : Authorization {
+      val auth = Authorization()
+      auth.parameterString = toParamString(query, auth.nonce, auth.timeStamp)
+      val baseString = "$HTTP_METHOD_GET&${Uri.encode(TWITTER_ENDPOINT)}&${Uri.encode(auth.parameterString)}"
+      auth.oauthSignature = baseString.computeSignature("$TWITTER_CONSUMER_SECRET&${Uri.encode(TWITTER_ACCESS_TOKEN_SECRET)}")
+      return auth
+    }
+
+    fun create(query: String = String.EMPTY, since_id: String = String.EMPTY) : Authorization {
+      val auth = Authorization()
+      auth.parameterString = toParamString(query, since_id, auth.nonce, auth.timeStamp)
+      val baseString = "$HTTP_METHOD_GET&${Uri.encode(TWITTER_ENDPOINT)}&${Uri.encode(auth.parameterString)}"
+      auth.oauthSignature = baseString.computeSignature("$TWITTER_CONSUMER_SECRET&${Uri.encode(TWITTER_ACCESS_TOKEN_SECRET)}")
+      return auth
+    }
   }
 
-  private val parameterString: String
-  private val oauthSignature: String
+  private lateinit var parameterString: String
+  private lateinit var oauthSignature: String
 
-  private val nonce = newNonce()
-  private val timeStamp = currentTime()
-
-  init {
-    parameterString = toParamString(lang, query, nonce, timeStamp)
-    val baseString = "$HTTP_METHOD_GET&${Uri.encode(TWITTER_ENDPOINT)}&${Uri.encode(parameterString)}"
-    oauthSignature = baseString.computeSignature("$TWITTER_CONSUMER_SECRET&${Uri.encode(TWITTER_ACCESS_TOKEN_SECRET)}")
-  }
+  private var nonce = newNonce()
+  private var timeStamp = currentTime()
 
   private fun authorizationHeader(nonce: String, timeStamp: String): String = "OAuth $OAUTH_CONSUMER_KEY=\"$TWITTER_CONSUMER_KEY\"," +
     "$OAUTH_SIGNATURE_METHOD=\"$OAUTH_SIGNATURE_METHOD_VALUE\"," +

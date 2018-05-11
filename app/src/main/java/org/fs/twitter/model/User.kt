@@ -23,14 +23,14 @@ import org.fs.mvp.core.AbstractEntity
 
 open class User private constructor() : AbstractEntity() {
 
-  var id: Int? = null
+  var id: Long? = null
   @SerializedName("screen_name") var screenName: String? = null
   var name: String? = null
 
   override fun readParcel(input: Parcel?) {
     val hasId = input?.readInt() == 1
     if (hasId) {
-      id = input?.readInt()
+      id = input?.readLong()
     }
     val hasScreenName = input?.readInt() == 1
     if (hasScreenName) {
@@ -46,7 +46,7 @@ open class User private constructor() : AbstractEntity() {
     val hasId = id != null
     out?.writeInt(if (hasId) 1 else 0)
     id?.let {
-      out?.writeInt(it)
+      out?.writeLong(it)
     }
     val hasScreenName = !TextUtils.isEmpty(screenName)
     out?.writeInt(if (hasScreenName) 1 else 0)

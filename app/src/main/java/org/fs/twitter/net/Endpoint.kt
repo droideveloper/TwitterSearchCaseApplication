@@ -17,11 +17,13 @@ package org.fs.twitter.net
 
 import io.reactivex.Observable
 import org.fs.twitter.model.Authorization
+import org.fs.twitter.model.TweetResponse
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
 
 interface Endpoint {
 
-  @GET("1.1/search/tweets.json") fun search(@Header("Authorization") authorization: Authorization, @Query("lang") lang: String, @Query("q") q: String, @Query("result_type") resultType: String = "mixed"): Observable<String>
+  @GET("1.1/search/tweets.json") fun search(@Header("Authorization") authorization: Authorization,  @Query("q") q: String): Observable<TweetResponse>
+  @GET("1.1/search/tweets.json") fun loadMore(@Header( "Authorization") authorization: Authorization,  @Query("q") q: String, @Query("since_id") since_id: String): Observable<TweetResponse>
 }

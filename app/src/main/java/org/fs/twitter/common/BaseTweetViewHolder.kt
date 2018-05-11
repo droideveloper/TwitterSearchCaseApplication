@@ -22,6 +22,6 @@ import org.fs.twitter.model.Tweet
 abstract class BaseTweetViewHolder(view: View) : AbstractRecyclerViewHolder<Tweet>(view) {
 
   override fun onBindView(entity: Tweet?) {
-    // TODO bind here
+   this.entity = entity
   }
 }

@@ -1,3 +1,4 @@
 <resources>
   <string name="app_name">Tweet Search Case Application</string>
+  <string name="util_search">Search Tweets!</string>
 </resources>

@@ -16,39 +16,23 @@
 package org.fs.twitter.view.holder
 
 import android.view.View
-import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.view_simple_tweet_item.view.*
-import org.fs.mvp.common.BusManager
+import kotlinx.android.synthetic.main.view_progress_item.view.*
 import org.fs.twitter.common.BaseTweetViewHolder
 import org.fs.twitter.model.Tweet
-import org.fs.twitter.model.event.SelectedTweetEvent
-import org.fs.uibinding.util.clicks
 
-class SimpleTweetViewHolder(view: View) : BaseTweetViewHolder(view) {
+class TweetLoadMoreViewHolder(view: View) : BaseTweetViewHolder(view) {
 
-  private val disposeBag = CompositeDisposable()
-
-  override fun onBindView(entity: Tweet?) {
-    entity?.let {
-      itemView.viewTweetTitle.text = it.text
-      itemView.viewTweetTime.text = it.createdAt
-    }
-  }
+  override fun onBindView(entity: Tweet?) {}
 
   override fun attached() {
     super.attached()
-    val disposable = itemView.clicks()
-      .subscribe {
-        entity?.let {
-          BusManager.send(SelectedTweetEvent(it))
-        }
-      }
-
-    disposeBag.add(disposable)
+    itemView.viewProgress.visibility = View.VISIBLE
+    itemView.viewProgress.isIndeterminate = true
   }
 
   override fun detached() {
-    disposeBag.clear()
+    itemView.viewProgress.isIndeterminate = false
+    itemView.viewProgress.visibility = View.GONE
     super.detached()
   }
 }

@@ -23,14 +23,14 @@ import org.fs.mvp.core.AbstractEntity
 
 open class Media private constructor() : AbstractEntity() {
 
-  var id: Int? = null
+  var id: Long? = null
   @SerializedName("media_url") var imageUrl: String? = null
   var type: String? = null
 
   override fun readParcel(input: Parcel?) {
     val hasId = input?.readInt() == 1
     if (hasId) {
-      id = input?.readInt()
+      id = input?.readLong()
     }
     val hasImageUrl = input?.readInt() == 1
     if (hasImageUrl) {
@@ -46,7 +46,7 @@ open class Media private constructor() : AbstractEntity() {
     val hasId = id != null
     out?.writeInt(if (hasId) 1 else 0)
     id?.let {
-      out?.writeInt(it)
+      out?.writeLong(it)
     }
     val hasImageUrl = !TextUtils.isEmpty(imageUrl)
     out?.writeInt(if (hasImageUrl) 1 else 0)

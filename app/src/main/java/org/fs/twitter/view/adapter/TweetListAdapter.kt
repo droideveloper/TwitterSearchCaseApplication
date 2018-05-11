@@ -18,13 +18,50 @@ package org.fs.twitter.view.adapter
 import android.view.ViewGroup
 import org.fs.mvp.core.AbstractRecyclerViewAdapter
 import org.fs.mvp.util.ObservableList
+import org.fs.twitter.R
 import org.fs.twitter.common.BaseTweetViewHolder
 import org.fs.twitter.model.Tweet
+import org.fs.twitter.view.holder.ImagedTweetViewHolder
+import org.fs.twitter.view.holder.SimpleTweetViewHolder
+import org.fs.twitter.view.holder.TweetLoadMoreViewHolder
 
 class TweetListAdapter(dataSet: ObservableList<Tweet>) : AbstractRecyclerViewAdapter<Tweet, BaseTweetViewHolder>(dataSet) {
 
+  companion object {
+    private const val VIEW_TYPE_SIMPLE_TWEET = 0x01
+    private const val VIEW_TYPE_IMAGED_TWEET = 0x02
+    private const val VIEW_TYPE_PROGRESS = 0x03
+  }
+
+  override fun onViewAttachedToWindow(viewHolder: BaseTweetViewHolder) {
+    super.onViewAttachedToWindow(viewHolder)
+    viewHolder.attached()
+  }
+
+  override fun onViewDetachedFromWindow(viewHolder: BaseTweetViewHolder) {
+    viewHolder.detached()
+    super.onViewDetachedFromWindow(viewHolder)
+  }
+
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseTweetViewHolder {
-    // TODO return ViewHolders
-    throw RuntimeException("hellori hz.")
+    val factory = factory(parent)
+    factory?.let {
+      return when (viewType) {
+        VIEW_TYPE_PROGRESS -> TweetLoadMoreViewHolder(factory.inflate(R.layout.view_progress_item, parent, false))
+        VIEW_TYPE_SIMPLE_TWEET -> SimpleTweetViewHolder(factory.inflate(R.layout.view_simple_tweet_item, parent, false))
+        VIEW_TYPE_IMAGED_TWEET -> ImagedTweetViewHolder(factory.inflate(R.layout.view_imaged_tweet_item, parent, false))
+        else -> throw RuntimeException("can not identify view type $viewType")
+      }
+    }
+    throw RuntimeException("can not identify view type $viewType")
+  }
+
+  override fun getItemViewType(position: Int): Int {
+    val item = itemAt(position)
+    return when {
+      item == Tweet.EMPTY -> VIEW_TYPE_PROGRESS
+      item.entities?.media == null -> VIEW_TYPE_SIMPLE_TWEET
+      else -> VIEW_TYPE_IMAGED_TWEET
+    }
   }
 } 

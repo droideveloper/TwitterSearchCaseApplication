@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.twitter.view
+package org.fs.twitter.common.module.fragment
 
-import io.reactivex.Observable
-import org.fs.mvp.common.ViewType
+import android.support.v4.app.Fragment
+import dagger.Binds
+import dagger.Module
+import dagger.android.AndroidInjector
+import dagger.android.support.FragmentKey
+import dagger.multibindings.IntoMap
+import org.fs.twitter.common.component.fragment.TweetListFragmentComponent
+import org.fs.twitter.view.TweetListFragment
 
-interface TweetListFragmentView : ViewType {
-  fun setUp()
-  fun query(): String
-  fun refreshes(): Observable<Boolean>
-  fun queryChanges(): Observable<CharSequence>
-  fun loadMore(): Observable<Boolean>
+@Module
+abstract class FragmentBuilder {
+
+  @Binds @IntoMap @FragmentKey(TweetListFragment::class)
+  abstract fun bindTweetListFragment(builder: TweetListFragmentComponent.Builder): AndroidInjector.Factory<out Fragment>
 }

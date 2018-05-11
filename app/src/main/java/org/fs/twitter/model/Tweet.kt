@@ -24,11 +24,11 @@ import org.fs.mvp.core.AbstractEntity
 open class Tweet private constructor() : AbstractEntity() {
 
   @SerializedName("created_at")var createdAt: String? = null
-  var id: Int? = null
+  var id: Long? = null
   var text: String? = null
   var user: User? = null
-  var entities: List<Entity>? = null
-  @SerializedName("extended_entities") var extendedEntities: List<Entity>? = null
+  var entities: Entity? = null
+  @SerializedName("extended_entities") var extendedEntities: Entity? = null
 
   override fun readParcel(input: Parcel?) {
     val hasCreatedAt = input?.readInt() == 1
@@ -37,7 +37,7 @@ open class Tweet private constructor() : AbstractEntity() {
     }
     val hasId = input?.readInt() == 1
     if (hasId) {
-      id = input?.readInt()
+      id = input?.readLong()
     }
     val hasUser = input?.readInt() == 1
     if (hasUser) {
@@ -45,13 +45,11 @@ open class Tweet private constructor() : AbstractEntity() {
     }
     val hasEntities = input?.readInt() == 1
     if (hasEntities) {
-      entities = ArrayList()
-      input?.readTypedList(entities, Entity.CREATOR)
+      entities = input?.readParcelable(Entity::class.java.classLoader)
     }
     val hasExtendedEntities = input?.readInt() == 1
     if (hasExtendedEntities) {
-      extendedEntities = ArrayList()
-      input?.readTypedList(extendedEntities, Entity.CREATOR)
+      extendedEntities = input?.readParcelable(Entity::class.java.classLoader)
     }
   }
 
@@ -64,26 +62,28 @@ open class Tweet private constructor() : AbstractEntity() {
     val hasId = id != null
     out?.writeInt(if (hasId) 1 else 0)
     id?.let {
-      out?.writeInt(it)
+      out?.writeLong(it)
     }
     val hasUser = user != null
     out?.writeInt(if (hasUser) 1 else 0)
     user?.let {
       out?.writeParcelable(it, flags)
     }
-    val hasEntities = entities != null && entities?.isEmpty() == false
+    val hasEntities = entities != null
     out?.writeInt(if (hasEntities) 1 else 0)
     entities?.let {
-      out?.writeTypedList(it)
+      out?.writeParcelable(it, flags)
     }
-    val hasExtendedEntities = extendedEntities != null && extendedEntities?.isEmpty() == false
+    val hasExtendedEntities = extendedEntities != null
     out?.writeInt(if (hasExtendedEntities) 1 else 0)
     extendedEntities?.let {
-      out?.writeTypedList(it)
+      out?.writeParcelable(it, flags)
     }
   }
 
   companion object {
+    val EMPTY = Tweet()
+
     @JvmField val CREATOR = object : Parcelable.Creator<Tweet> {
 
       override fun createFromParcel(source: Parcel?): Tweet {
