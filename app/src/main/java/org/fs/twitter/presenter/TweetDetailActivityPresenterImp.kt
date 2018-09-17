@@ -17,18 +17,21 @@ package org.fs.twitter.presenter
 
 import android.os.Bundle
 import io.reactivex.disposables.CompositeDisposable
-import org.fs.mvp.common.AbstractPresenter
+import org.fs.architecture.common.AbstractPresenter
+import org.fs.architecture.common.scope.ForActivity
 import org.fs.twitter.model.Tweet
+import org.fs.twitter.util.plusAssign
 import org.fs.twitter.view.TweetDetailActivityView
+import javax.inject.Inject
 
-class TweetDetailActivityPresenterImp(view: TweetDetailActivityView)
-  : AbstractPresenter<TweetDetailActivityView>(view), TweetDetailActivityPresenter {
+@ForActivity
+class TweetDetailActivityPresenterImp @Inject constructor(view: TweetDetailActivityView): AbstractPresenter<TweetDetailActivityView>(view), TweetDetailActivityPresenter {
 
   companion object {
     const val BUNDLE_ARGS_TWEET = "bundle.args.tweet"
   }
 
-  private val disposeBag = CompositeDisposable()
+  private val disposeBag by lazy { CompositeDisposable() }
 
   private var tweet: Tweet? = null
 
@@ -58,20 +61,12 @@ class TweetDetailActivityPresenterImp(view: TweetDetailActivityView)
 
   override fun onStart() {
     if (view.isAvailable()) {
-      val disposable = view.navigationClick()
-        .subscribe {
-          if (view.isAvailable()) {
-            view.finish()
-          }
-        }
-
-      disposeBag.add(disposable)
+      disposeBag += view.navigationClick()
+        .subscribe { _-> onBackPressed() }
     }
   }
 
-  override fun onStop() {
-    disposeBag.clear()
-  }
+  override fun onStop() = disposeBag.clear()
 
   override fun onBackPressed() {
     if (view.isAvailable()) {

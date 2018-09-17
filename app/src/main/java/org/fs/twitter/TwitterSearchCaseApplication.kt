@@ -21,5 +21,5 @@ import org.fs.twitter.common.component.DaggerAppComponent
 
 class TwitterSearchCaseApplication: DaggerApplication() {
 
-  override fun applicationInjector(): AndroidInjector<out DaggerApplication> = DaggerAppComponent.builder().application(this).build()
+  override fun applicationInjector(): AndroidInjector<out DaggerApplication> = DaggerAppComponent.builder().create(this)
 }

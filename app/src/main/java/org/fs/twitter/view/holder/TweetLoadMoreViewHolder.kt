@@ -16,23 +16,24 @@
 package org.fs.twitter.view.holder
 
 import android.view.View
+import android.view.ViewGroup
 import kotlinx.android.synthetic.main.view_progress_item.view.*
+import org.fs.architecture.util.inflate
+import org.fs.twitter.R
 import org.fs.twitter.common.BaseTweetViewHolder
 import org.fs.twitter.model.Tweet
 
 class TweetLoadMoreViewHolder(view: View) : BaseTweetViewHolder(view) {
 
-  override fun onBindView(entity: Tweet?) {}
+  constructor(parent: ViewGroup): this(parent.inflate(R.layout.view_progress_item))
+
+  override fun onBindView(entity: Tweet?) = Unit
 
   override fun attached() {
-    super.attached()
-    itemView.viewProgress.visibility = View.VISIBLE
     itemView.viewProgress.isIndeterminate = true
   }
 
   override fun detached() {
     itemView.viewProgress.isIndeterminate = false
-    itemView.viewProgress.visibility = View.GONE
-    super.detached()
   }
 }

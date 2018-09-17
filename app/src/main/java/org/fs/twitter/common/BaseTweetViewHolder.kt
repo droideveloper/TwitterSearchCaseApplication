@@ -16,7 +16,7 @@
 package org.fs.twitter.common
 
 import android.view.View
-import org.fs.mvp.core.AbstractRecyclerViewHolder
+import org.fs.architecture.core.AbstractRecyclerViewHolder
 import org.fs.twitter.model.Tweet
 
 abstract class BaseTweetViewHolder(view: View) : AbstractRecyclerViewHolder<Tweet>(view) {

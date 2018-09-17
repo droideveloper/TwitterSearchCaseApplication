@@ -16,40 +16,39 @@
 package org.fs.twitter.view.holder
 
 import android.view.View
+import android.view.ViewGroup
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.view_simple_tweet_item.view.*
-import org.fs.mvp.common.BusManager
+import org.fs.architecture.common.BusManager
+import org.fs.architecture.util.inflate
+import org.fs.rx.extensions.util.clicks
+import org.fs.twitter.R
 import org.fs.twitter.common.BaseTweetViewHolder
 import org.fs.twitter.model.Tweet
 import org.fs.twitter.model.event.SelectedTweetEvent
-import org.fs.uibinding.util.clicks
+import org.fs.twitter.util.plusAssign
 
 class SimpleTweetViewHolder(view: View) : BaseTweetViewHolder(view) {
 
-  private val disposeBag = CompositeDisposable()
+  private val disposeBag by lazy { CompositeDisposable() }
+
+  constructor(parent: ViewGroup): this(parent.inflate(R.layout.view_simple_tweet_item))
 
   override fun onBindView(entity: Tweet?) {
     super.onBindView(entity)
-    entity?.let {
-      itemView.viewTweetTitle.text = it.text
-      itemView.viewTweetTime.text = it.createdAt
+    entity?.let { tweet ->
+      itemView.viewTweetTitle.text = tweet.text
+      itemView.viewTweetTime.text = tweet.createdAt
     }
   }
 
   override fun attached() {
-    super.attached()
-    val disposable = itemView.clicks()
-      .subscribe {
-        entity?.let {
-          BusManager.send(SelectedTweetEvent(it))
-        }
-      }
-
-    disposeBag.add(disposable)
+    disposeBag += bindSelectedTweetEvent(entity).subscribe(BusManager.Companion::send)
   }
 
-  override fun detached() {
-    disposeBag.clear()
-    super.detached()
-  }
+  override fun detached() = disposeBag.clear()
+
+  private fun bindSelectedTweetEvent(tweet: Tweet?): Observable<SelectedTweetEvent> = itemView.clicks()
+    .map { _ -> SelectedTweetEvent(tweet ?: Tweet.EMPTY) }
 }

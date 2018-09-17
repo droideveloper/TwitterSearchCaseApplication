@@ -17,7 +17,7 @@ package org.fs.twitter.common
 
 import android.app.Activity
 import android.content.Intent
-import org.fs.mvp.common.NavigationType
+import org.fs.architecture.common.NavigationType
 import org.fs.twitter.model.Tweet
 import org.fs.twitter.presenter.TweetDetailActivityPresenterImp
 import org.fs.twitter.view.TweetDetailActivity

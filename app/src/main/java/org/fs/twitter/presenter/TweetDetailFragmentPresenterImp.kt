@@ -18,20 +18,23 @@ package org.fs.twitter.presenter
 import android.os.Bundle
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
-import org.fs.mvp.common.AbstractPresenter
-import org.fs.mvp.common.BusManager
+import org.fs.architecture.common.AbstractPresenter
+import org.fs.architecture.common.BusManager
+import org.fs.architecture.common.scope.ForFragment
 import org.fs.twitter.model.Tweet
 import org.fs.twitter.model.event.ShowTweetDetail
+import org.fs.twitter.util.plusAssign
 import org.fs.twitter.view.TweetDetailFragmentView
+import javax.inject.Inject
 
-class TweetDetailFragmentPresenterImp(view: TweetDetailFragmentView)
-  : AbstractPresenter<TweetDetailFragmentView>(view), TweetDetailFragmentPresenter {
+@ForFragment
+class TweetDetailFragmentPresenterImp @Inject constructor(view: TweetDetailFragmentView): AbstractPresenter<TweetDetailFragmentView>(view), TweetDetailFragmentPresenter {
 
   companion object {
     const val BUNDLE_ARGS_TWEET = "bundle.args.tweet"
   }
 
-  private val disposeBag = CompositeDisposable()
+  private val disposeBag by lazy { CompositeDisposable() }
 
   private var tweet: Tweet? = null
 
@@ -51,26 +54,23 @@ class TweetDetailFragmentPresenterImp(view: TweetDetailFragmentView)
     }
   }
 
+  override fun onCreate() {
+    if (view.isAvailable()) {
+      view.showDetail(tweet ?: Tweet.EMPTY)
+    }
+  }
+
   override fun onStart() {
     if (view.isAvailable()) {
-
-      tweet?.let {
-        view.showDetail(it)
-      }
-
-      val disposable = BusManager.add(Consumer { evt ->
+      disposeBag += BusManager.add(Consumer { evt ->
         if (evt is ShowTweetDetail) {
           if (view.isAvailable()) {
             view.showDetail(evt.tweet)
           }
         }
       })
-
-      disposeBag.add(disposable)
     }
   }
 
-  override fun onStop() {
-    disposeBag.clear()
-  }
+  override fun onStop() = disposeBag.clear()
 }  

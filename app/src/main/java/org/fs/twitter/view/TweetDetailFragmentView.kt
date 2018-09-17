@@ -15,7 +15,7 @@
  */
 package org.fs.twitter.view
 
-import org.fs.mvp.common.ViewType
+import org.fs.architecture.common.ViewType
 import org.fs.twitter.model.Tweet
 
 interface TweetDetailFragmentView : ViewType {

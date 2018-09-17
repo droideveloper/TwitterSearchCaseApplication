@@ -15,93 +15,19 @@
  */
 package org.fs.twitter.model
 
-import android.os.Parcel
 import android.os.Parcelable
-import android.text.TextUtils
 import com.google.gson.annotations.SerializedName
-import org.fs.mvp.core.AbstractEntity
+import kotlinx.android.parcel.Parcelize
 
-open class Tweet private constructor() : AbstractEntity() {
-
-  @SerializedName("created_at")var createdAt: String? = null
-  var id: Long? = null
-  var text: String? = null
-  var user: User? = null
-  var entities: Entity? = null
-  @SerializedName("extended_entities") var extendedEntities: Entity? = null
-
-  override fun readParcel(input: Parcel?) {
-    val hasCreatedAt = input?.readInt() == 1
-    if (hasCreatedAt) {
-      createdAt = input?.readString()
-    }
-    val hasId = input?.readInt() == 1
-    if (hasId) {
-      id = input?.readLong()
-    }
-    val hasText = input?.readInt() == 1
-    if (hasText) {
-      text = input?.readString()
-    }
-    val hasUser = input?.readInt() == 1
-    if (hasUser) {
-      user = input?.readParcelable(User::class.java.classLoader)
-    }
-    val hasEntities = input?.readInt() == 1
-    if (hasEntities) {
-      entities = input?.readParcelable(Entity::class.java.classLoader)
-    }
-    val hasExtendedEntities = input?.readInt() == 1
-    if (hasExtendedEntities) {
-      extendedEntities = input?.readParcelable(Entity::class.java.classLoader)
-    }
-  }
-
-  override fun writeParcel(out: Parcel?, flags: Int) {
-    val hasCreatedAt = !TextUtils.isEmpty(createdAt)
-    out?.writeInt(if (hasCreatedAt) 1 else 0)
-    createdAt?.let {
-      out?.writeString(it)
-    }
-    val hasId = id != null
-    out?.writeInt(if (hasId) 1 else 0)
-    id?.let {
-      out?.writeLong(it)
-    }
-    val hasText = !TextUtils.isEmpty(text)
-    out?.writeInt(if (hasText) 1 else 0)
-    if (hasText) {
-      out?.writeString(text)
-    }
-    val hasUser = user != null
-    out?.writeInt(if (hasUser) 1 else 0)
-    user?.let {
-      out?.writeParcelable(it, flags)
-    }
-    val hasEntities = entities != null
-    out?.writeInt(if (hasEntities) 1 else 0)
-    entities?.let {
-      out?.writeParcelable(it, flags)
-    }
-    val hasExtendedEntities = extendedEntities != null
-    out?.writeInt(if (hasExtendedEntities) 1 else 0)
-    extendedEntities?.let {
-      out?.writeParcelable(it, flags)
-    }
-  }
-
+@Parcelize
+data class Tweet(@field:SerializedName("created_at") val createdAt: String? = null,
+    val id: Long? = null,
+    val text: String? = null,
+    val user: User? = null,
+    val entities: Entity? = null,
+    @field:SerializedName("extended_entities") val extendedEntities: Entity? = null): Parcelable {
   companion object {
     val EMPTY = Tweet()
-
-    @JvmField val CREATOR = object : Parcelable.Creator<Tweet> {
-
-      override fun createFromParcel(source: Parcel?): Tweet {
-        val obj = Tweet()
-        obj.readParcel(source)
-        return obj
-      }
-
-      override fun newArray(size: Int): Array<Tweet?> = arrayOfNulls(size)
-    }
   }
 }
+

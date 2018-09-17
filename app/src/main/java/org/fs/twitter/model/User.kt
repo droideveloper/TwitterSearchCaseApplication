@@ -15,62 +15,11 @@
  */
 package org.fs.twitter.model
 
-import android.os.Parcel
 import android.os.Parcelable
-import android.text.TextUtils
 import com.google.gson.annotations.SerializedName
-import org.fs.mvp.core.AbstractEntity
+import kotlinx.android.parcel.Parcelize
 
-open class User private constructor() : AbstractEntity() {
-
-  var id: Long? = null
-  @SerializedName("screen_name") var screenName: String? = null
-  var name: String? = null
-
-  override fun readParcel(input: Parcel?) {
-    val hasId = input?.readInt() == 1
-    if (hasId) {
-      id = input?.readLong()
-    }
-    val hasScreenName = input?.readInt() == 1
-    if (hasScreenName) {
-      screenName = input?.readString()
-    }
-    val hasName = input?.readInt() == 1
-    if (hasName) {
-      name = input?.readString()
-    }
-  }
-
-  override fun writeParcel(out: Parcel?, flags: Int) {
-    val hasId = id != null
-    out?.writeInt(if (hasId) 1 else 0)
-    id?.let {
-      out?.writeLong(it)
-    }
-    val hasScreenName = !TextUtils.isEmpty(screenName)
-    out?.writeInt(if (hasScreenName) 1 else 0)
-    screenName?.let {
-      out?.writeString(it)
-    }
-    val hasName = !TextUtils.isEmpty(name)
-    out?.writeInt(if (hasName) 1 else 0)
-    name?.let {
-      out?.writeString(it)
-    }
-  }
-
-  companion object {
-    @JvmField val CREATOR = object : Parcelable.Creator<User> {
-
-      override fun createFromParcel(source: Parcel?): User {
-        val obj = User()
-        obj.readParcel(source)
-        return obj
-      }
-
-      override fun newArray(size: Int): Array<User?> = arrayOfNulls(size)
-
-    }
-  }
-}
+@Parcelize
+data class User(val id: Long?,
+    @field:SerializedName("screen_name") val screenName: String?,
+    val name: String?): Parcelable

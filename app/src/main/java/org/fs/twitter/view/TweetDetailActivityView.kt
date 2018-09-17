@@ -17,7 +17,7 @@ package org.fs.twitter.view
 
 import android.view.View
 import io.reactivex.Observable
-import org.fs.mvp.common.ViewType
+import org.fs.architecture.common.ViewType
 import org.fs.twitter.model.Tweet
 
 interface TweetDetailActivityView : ViewType {

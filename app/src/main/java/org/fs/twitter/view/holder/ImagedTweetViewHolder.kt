@@ -17,16 +17,19 @@ package org.fs.twitter.view.holder
 
 import android.text.TextUtils
 import android.view.View
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
+import android.view.ViewGroup
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.view_imaged_tweet_item.view.*
-import org.fs.mvp.common.BusManager
+import org.fs.architecture.common.BusManager
+import org.fs.architecture.util.inflate
+import org.fs.rx.extensions.util.clicks
 import org.fs.twitter.R
 import org.fs.twitter.common.BaseTweetViewHolder
+import org.fs.twitter.common.GlideApp
 import org.fs.twitter.model.Tweet
 import org.fs.twitter.model.event.SelectedTweetEvent
-import org.fs.uibinding.util.clicks
+import org.fs.twitter.util.plusAssign
 
 class ImagedTweetViewHolder(view: View) : BaseTweetViewHolder(view) {
 
@@ -34,22 +37,22 @@ class ImagedTweetViewHolder(view: View) : BaseTweetViewHolder(view) {
     private const val TYPE_PHOTO = "photo"
   }
 
-  private val disposeBag = CompositeDisposable()
+  private val disposeBag by lazy { CompositeDisposable() }
+  private val glide by lazy { GlideApp.with(view) }
+
+  constructor(parent: ViewGroup): this(parent.inflate(R.layout.view_imaged_tweet_item))
 
   override fun onBindView(entity: Tweet?) {
     super.onBindView(entity)
-    entity?.let {
-      itemView.viewTweetTitle.text = it.text
-      itemView.viewTweetTime.text = it.createdAt
+    entity?.let { tweet ->
+      itemView.viewTweetTitle.text = tweet.text
+      itemView.viewTweetTime.text = tweet.createdAt
       // load first image we grab for show
-      it.entities?.let { e ->
+      tweet.entities?.let { e ->
         val first = e.media?.first { t -> TextUtils.equals(TYPE_PHOTO, t.type)}
         first?.let { img ->
-            Glide.with(itemView.context)
-              .load(img.imageUrl)
-              .fitCenter()
-              .placeholder(R.drawable.list_item_decorator)
-              .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            glide.load(img.imageUrl)
+              .centerCrop()
               .into(itemView.viewTweetImage)
 
         }
@@ -58,19 +61,11 @@ class ImagedTweetViewHolder(view: View) : BaseTweetViewHolder(view) {
   }
 
   override fun attached() {
-    super.attached()
-    val disposable = itemView.clicks()
-      .subscribe {
-        entity?.let {
-          BusManager.send(SelectedTweetEvent(it))
-        }
-      }
-
-    disposeBag.add(disposable)
+    disposeBag += bindSelectedTweetEvent(entity).subscribe(BusManager.Companion::send)
   }
 
-  override fun detached() {
-    disposeBag.clear()
-    super.detached()
-  }
+  override fun detached() = disposeBag.clear()
+
+  private fun bindSelectedTweetEvent(tweet: Tweet?): Observable<SelectedTweetEvent> = itemView.clicks()
+    .map { _ -> SelectedTweetEvent(tweet ?: Tweet.EMPTY) }
 }

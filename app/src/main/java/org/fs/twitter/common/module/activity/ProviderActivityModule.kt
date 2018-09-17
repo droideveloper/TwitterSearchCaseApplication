@@ -17,21 +17,27 @@ package org.fs.twitter.common.module.activity
 
 import dagger.Module
 import dagger.Provides
-import org.fs.mvp.common.NavigationType
-import org.fs.mvp.common.scope.ForActivity
+import org.fs.architecture.common.NavigationType
+import org.fs.architecture.common.scope.ForActivity
 import org.fs.twitter.R
 import org.fs.twitter.common.HandsetNavigation
 import org.fs.twitter.common.TabletNavigation
 import org.fs.twitter.model.Tweet
 import org.fs.twitter.presenter.MainActivityPresenter
 import org.fs.twitter.presenter.MainActivityPresenterImp
+import org.fs.twitter.presenter.TweetDetailActivityPresenter
+import org.fs.twitter.presenter.TweetDetailActivityPresenterImp
 import org.fs.twitter.view.MainActivity
 import org.fs.twitter.view.MainActivityView
+import org.fs.twitter.view.TweetDetailActivity
+import org.fs.twitter.view.TweetDetailActivityView
 
 @Module
-class MainActivityModule {
+class ProviderActivityModule {
 
-  @ForActivity @Provides fun provideMainActivityView(activity: MainActivity): MainActivityView = activity
+  @ForActivity
+  @Provides fun provideMainActivityView(activity: MainActivity): MainActivityView = activity
+
   @ForActivity @Provides fun provideNavigationType(activity: MainActivity): NavigationType<Tweet> {
     val handset = activity.resources.getBoolean(R.bool.handset);
     if (handset) {
@@ -40,5 +46,10 @@ class MainActivityModule {
       return TabletNavigation()
     }
   }
+
   @ForActivity @Provides fun provideMainActivityPresenter(view: MainActivityView, navigationType: NavigationType<Tweet>): MainActivityPresenter = MainActivityPresenterImp(view, navigationType)
+
+  @ForActivity
+  @Provides fun provideTweetDetailActivityView(activity: TweetDetailActivity): TweetDetailActivityView = activity
+  @ForActivity @Provides fun provideTweetDetailActivityPrenseter(view: TweetDetailActivityView): TweetDetailActivityPresenter = TweetDetailActivityPresenterImp(view)
 }

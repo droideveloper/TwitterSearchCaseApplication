@@ -16,7 +16,7 @@
 package org.fs.twitter.view
 
 import android.os.Bundle
-import org.fs.mvp.core.AbstractActivity
+import org.fs.architecture.core.AbstractActivity
 import org.fs.twitter.R
 import org.fs.twitter.presenter.MainActivityPresenter
 

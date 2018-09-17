@@ -16,7 +16,7 @@
 package org.fs.twitter.view
 
 import io.reactivex.Observable
-import org.fs.mvp.common.ViewType
+import org.fs.architecture.common.ViewType
 
 interface TweetListFragmentView : ViewType {
   fun setUp()

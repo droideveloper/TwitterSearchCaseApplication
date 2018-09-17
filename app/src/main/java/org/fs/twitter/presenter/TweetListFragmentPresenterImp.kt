@@ -17,27 +17,30 @@ package org.fs.twitter.presenter
 
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
-import org.fs.mvp.common.AbstractPresenter
-import org.fs.mvp.common.BusManager
-import org.fs.mvp.util.ObservableList
+import org.fs.architecture.common.AbstractPresenter
+import org.fs.architecture.common.BusManager
+import org.fs.architecture.common.scope.ForFragment
+import org.fs.architecture.util.ObservableList
 import org.fs.twitter.model.Authorization
 import org.fs.twitter.model.Tweet
 import org.fs.twitter.model.event.RefreshSearchListEvent
 import org.fs.twitter.net.Endpoint
 import org.fs.twitter.util.EMPTY
 import org.fs.twitter.util.async
+import org.fs.twitter.util.plusAssign
 import org.fs.twitter.view.TweetListFragmentView
+import javax.inject.Inject
 
-class TweetListFragmentPresenterImp(view: TweetListFragmentView,
+@ForFragment
+class TweetListFragmentPresenterImp @Inject constructor(view: TweetListFragmentView,
     private val endpoint: Endpoint,
-    private val dataSet: ObservableList<Tweet>) :
-    AbstractPresenter<TweetListFragmentView>(view), TweetListFragmentPresenter {
+    private val dataSet: ObservableList<Tweet>): AbstractPresenter<TweetListFragmentView>(view), TweetListFragmentPresenter {
 
   companion object {
     private const val MIN_CHAR_COUNT = 3
   }
 
-  private val disposeBag = CompositeDisposable()
+  private val disposeBag by lazy {  CompositeDisposable() }
 
   private var query: String = String.EMPTY
 
@@ -49,7 +52,7 @@ class TweetListFragmentPresenterImp(view: TweetListFragmentView,
 
   override fun onStart() {
     if (view.isAvailable()) {
-      val disposable = BusManager.add(Consumer { evt ->
+      disposeBag += BusManager.add(Consumer { evt ->
         if (evt is RefreshSearchListEvent) {
           if (view.isAvailable()) {
             dataSet.clear()
@@ -58,44 +61,34 @@ class TweetListFragmentPresenterImp(view: TweetListFragmentView,
         }
       })
 
-      disposeBag.add(disposable)
+     disposeBag += view.queryChanges()
+      .map { it.trim() }
+      .filter { it.length >= MIN_CHAR_COUNT }
+      .subscribe({
+        dataSet.clear()
+        load(it.toString(), false)
+      }, { error -> error.printStackTrace() })
 
-      val observeQueryChanges = view.queryChanges()
-        .map { it.trim() }
-        .filter { it.length >= MIN_CHAR_COUNT }
-        .subscribe({
-          dataSet.clear()
-          load(it.toString(), false)
-        }, { error -> error.printStackTrace() })
-
-      disposeBag.add(observeQueryChanges)
-
-      val observeLoadMore = view.loadMore()
+      disposeBag += view.loadMore()
         .filter { it }
         .subscribe({ load(query, true) }, { error -> error.printStackTrace() })
 
-      disposeBag.add(observeLoadMore)
-
-      val observeSwipeRefresh = view.refreshes()
+      disposeBag += view.refreshes()
         .filter { it }
         .subscribe({
           dataSet.clear()
           load(query, false)
         }, { error -> error.printStackTrace() })
-
-      disposeBag.add(observeSwipeRefresh)
     }
   }
 
-  override fun onStop() {
-    disposeBag.clear()
-  }
+  override fun onStop() = disposeBag.clear()
 
   private fun load(query: String, loadMore: Boolean) {
     this.query = query
     if (loadMore) {
       val since = dataSet.last().id?.toString() ?: String.EMPTY
-      val disposable = endpoint.loadMore(Authorization.create(query, since), query, since)
+      disposeBag += endpoint.loadMore(Authorization.create(query, since), query, since)
         .map { it.statuses ?: emptyList() }
         .async()
         .doOnSubscribe {
@@ -113,10 +106,8 @@ class TweetListFragmentPresenterImp(view: TweetListFragmentView,
           }
         }, { error -> error.printStackTrace() })
 
-      disposeBag.add(disposable)
-
     } else {
-      val disposable = endpoint.search(Authorization.create(query), query)
+      disposeBag += endpoint.search(Authorization.create(query), query)
         .map { it.statuses ?: emptyList() }
         .async(view)
         .subscribe({ array ->
@@ -124,8 +115,6 @@ class TweetListFragmentPresenterImp(view: TweetListFragmentView,
             dataSet.addAll(array)
           }
         }, { error -> error.printStackTrace() })
-
-      disposeBag.add(disposable)
     }
   }
 }  

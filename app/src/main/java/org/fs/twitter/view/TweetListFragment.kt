@@ -18,24 +18,25 @@ package org.fs.twitter.view
 import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.view_tweet_list_fragment.*
-import org.fs.mvp.core.AbstractFragment
+import org.fs.architecture.core.AbstractFragment
+import org.fs.rx.extensions.v4.util.refreshes
+import org.fs.rx.extensions.v7.util.loadMore
+import org.fs.rx.extensions.v7.util.queryChanges
 import org.fs.twitter.R
 import org.fs.twitter.presenter.TweetListFragmentPresenter
-import org.fs.uibinding.v4.util.refreshes
-import org.fs.uibinding.v7.util.loadMore
-import org.fs.uibinding.v7.util.queryChanges
+import org.fs.twitter.view.adapter.TweetListAdapter
 import javax.inject.Inject
 
 class TweetListFragment : AbstractFragment<TweetListFragmentPresenter>(), TweetListFragmentView {
 
-  @Inject lateinit var layoutManager: RecyclerView.LayoutManager
-  @Inject lateinit var adapter: RecyclerView.Adapter<*>
+  @Inject lateinit var tweetListAdapter: TweetListAdapter
 
   override fun onCreateView(factory: LayoutInflater, parent: ViewGroup?, savedInstanceState: Bundle?): View? = factory.inflate(R.layout.view_tweet_list_fragment, parent, false)
 
@@ -58,8 +59,8 @@ class TweetListFragment : AbstractFragment<TweetListFragmentPresenter>(), TweetL
     viewRecycler.setHasFixedSize(true)
     viewRecycler.isDrawingCacheEnabled = true
     viewRecycler.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH
-    viewRecycler.adapter = adapter
-    viewRecycler.layoutManager = layoutManager
+    viewRecycler.adapter = tweetListAdapter
+    viewRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
   }
 
   override fun showProgress() {

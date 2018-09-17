@@ -15,6 +15,6 @@
  */
 package org.fs.twitter.view
 
-import org.fs.mvp.common.ViewType
+import org.fs.architecture.common.ViewType
 
-interface MainActivityView : ViewType 
+interface MainActivityView : ViewType

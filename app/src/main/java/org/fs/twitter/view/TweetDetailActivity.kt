@@ -19,11 +19,11 @@ import android.os.Bundle
 import android.view.View
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.view_tweet_detail_activity.*
-import org.fs.mvp.core.AbstractActivity
+import org.fs.architecture.core.AbstractActivity
+import org.fs.rx.extensions.v7.util.navigationClicks
 import org.fs.twitter.R
 import org.fs.twitter.model.Tweet
 import org.fs.twitter.presenter.TweetDetailActivityPresenter
-import org.fs.uibinding.v7.util.navigationClicks
 
 class TweetDetailActivity : AbstractActivity<TweetDetailActivityPresenter>(), TweetDetailActivityView {
 
@@ -39,7 +39,7 @@ class TweetDetailActivity : AbstractActivity<TweetDetailActivityPresenter>(), Tw
     val fragment = TweetDetailFragment.create(tweet)
     supportFragmentManager.beginTransaction()
       .replace(R.id.viewContentFrameLayout, fragment)
-      .commitAllowingStateLoss()
+      .commit()
   }
 
   override fun navigationClick(): Observable<View> = viewToolbar.navigationClicks()

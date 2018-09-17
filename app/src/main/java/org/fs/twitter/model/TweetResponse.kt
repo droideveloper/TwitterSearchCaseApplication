@@ -15,41 +15,8 @@
  */
 package org.fs.twitter.model
 
-import android.os.Parcel
 import android.os.Parcelable
-import org.fs.mvp.core.AbstractEntity
+import kotlinx.android.parcel.Parcelize
 
-open class TweetResponse private constructor() : AbstractEntity() {
-
-  var statuses: List<Tweet>? = null
-
-  override fun readParcel(input: Parcel?) {
-    val hasStatuses = input?.readInt() == 1
-    if (hasStatuses) {
-      statuses = ArrayList()
-      input?.readTypedList(statuses, Tweet.CREATOR)
-    }
-  }
-
-  override fun writeParcel(out: Parcel?, flags: Int) {
-    val hasStatuses = statuses?.isEmpty() == false
-    out?.writeInt(if (hasStatuses) 1 else 0)
-    statuses?.let {
-      out?.writeTypedList(statuses)
-    }
-  }
-
-  companion object {
-    @JvmField val CREATOR = object : Parcelable.Creator<TweetResponse> {
-
-      override fun createFromParcel(source: Parcel?): TweetResponse {
-        val obj = TweetResponse()
-        obj.readParcel(source)
-        return obj
-      }
-
-      override fun newArray(size: Int): Array<TweetResponse?> = arrayOfNulls(size)
-
-    }
-  }
-}
+@Parcelize
+data class TweetResponse(val statuses: List<Tweet>?): Parcelable

@@ -15,28 +15,28 @@
  */
 package org.fs.twitter.common.module.fragment
 
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import dagger.Module
 import dagger.Provides
-import org.fs.mvp.common.scope.ForFragment
-import org.fs.mvp.util.ObservableList
+import org.fs.architecture.common.scope.ForFragment
+import org.fs.architecture.util.ObservableList
 import org.fs.twitter.model.Tweet
-import org.fs.twitter.net.Endpoint
+import org.fs.twitter.presenter.TweetDetailFragmentPresenter
+import org.fs.twitter.presenter.TweetDetailFragmentPresenterImp
 import org.fs.twitter.presenter.TweetListFragmentPresenter
 import org.fs.twitter.presenter.TweetListFragmentPresenterImp
+import org.fs.twitter.view.TweetDetailFragment
+import org.fs.twitter.view.TweetDetailFragmentView
 import org.fs.twitter.view.TweetListFragment
 import org.fs.twitter.view.TweetListFragmentView
-import org.fs.twitter.view.adapter.TweetListAdapter
 
 @Module
-class TweetListFragmentModule {
-
-  private val dataSet = ObservableList<Tweet>()
+class ProviderFragmentModule {
 
   @ForFragment @Provides fun provideTweetListFragmentView(fragment: TweetListFragment): TweetListFragmentView = fragment
-  @ForFragment @Provides fun provideTweetListFragmentPresenter(view: TweetListFragmentView,endpoint: Endpoint, dataSet: ObservableList<Tweet>): TweetListFragmentPresenter = TweetListFragmentPresenterImp(view, endpoint, dataSet)
-  @ForFragment @Provides fun provideDataSet(): ObservableList<Tweet> = dataSet
-  @ForFragment @Provides fun provideLayoutManager(view: TweetListFragmentView): RecyclerView.LayoutManager = LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false)
-  @ForFragment @Provides fun provideAdapter(dataSet: ObservableList<Tweet>): RecyclerView.Adapter<*> = TweetListAdapter(dataSet)
+  @ForFragment @Provides fun provideTweetListFragmentPresenter(presenter: TweetListFragmentPresenterImp): TweetListFragmentPresenter = presenter
+
+  @ForFragment @Provides fun provideDataSet(): ObservableList<Tweet> = ObservableList()
+
+  @ForFragment @Provides fun provideTweetDetailFragmentView(fragment: TweetDetailFragment): TweetDetailFragmentView = fragment
+  @ForFragment @Provides fun provideTweetDetailFragmentPresenter(presenter: TweetDetailFragmentPresenterImp): TweetDetailFragmentPresenter = presenter
 }

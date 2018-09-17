@@ -22,8 +22,10 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import org.fs.mvp.common.ViewType
+import org.fs.architecture.common.ViewType
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.crypto.Mac
@@ -131,3 +133,7 @@ fun Completable.async(view: ViewType) = this.async()
       view.hideProgress()
     }
   }
+
+operator fun CompositeDisposable.plusAssign(d: Disposable) {
+  add(d)
+}

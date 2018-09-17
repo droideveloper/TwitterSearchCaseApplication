@@ -19,58 +19,9 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.text.TextUtils
 import com.google.gson.annotations.SerializedName
-import org.fs.mvp.core.AbstractEntity
+import kotlinx.android.parcel.Parcelize
 
-open class Media private constructor() : AbstractEntity() {
-
-  var id: Long? = null
-  @SerializedName("media_url") var imageUrl: String? = null
-  var type: String? = null
-
-  override fun readParcel(input: Parcel?) {
-    val hasId = input?.readInt() == 1
-    if (hasId) {
-      id = input?.readLong()
-    }
-    val hasImageUrl = input?.readInt() == 1
-    if (hasImageUrl) {
-      imageUrl = input?.readString()
-    }
-    val hasType = input?.readInt() == 1
-    if (hasType) {
-      type = input?.readString()
-    }
-  }
-
-  override fun writeParcel(out: Parcel?, flags: Int) {
-    val hasId = id != null
-    out?.writeInt(if (hasId) 1 else 0)
-    id?.let {
-      out?.writeLong(it)
-    }
-    val hasImageUrl = !TextUtils.isEmpty(imageUrl)
-    out?.writeInt(if (hasImageUrl) 1 else 0)
-    imageUrl?.let {
-      out?.writeString(it)
-    }
-    val hasType = !TextUtils.isEmpty(type)
-    out?.writeInt(if (hasType) 1 else 0)
-    type?.let {
-      out?.writeString(it)
-    }
-  }
-
-  companion object {
-
-    @JvmField val CREATOR = object : Parcelable.Creator<Media> {
-
-      override fun createFromParcel(source: Parcel?): Media {
-        val obj = Media()
-        obj.readParcel(source)
-        return obj
-      }
-
-      override fun newArray(size: Int): Array<Media?> = arrayOfNulls(size)
-    }
-  }
-}
+@Parcelize
+data class Media(val id: Long?,
+    @field:SerializedName("media_url") val imageUrl: String?,
+    val type: String?): Parcelable

@@ -30,6 +30,11 @@ android {
   }
 }
 
+
+androidExtensions {
+  experimental = true
+}
+
 dependencies {
 
   implementation "org.fs.architecture:mvp:$mvpVersion"
@@ -43,6 +48,8 @@ dependencies {
 
   kapt "com.google.dagger:dagger-compiler:$daggerVersion"
   kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
+
+  kapt "com.github.bumptech.glide:compiler:$glideVersion"
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
 }

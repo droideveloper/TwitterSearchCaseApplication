@@ -15,7 +15,7 @@
  */
 package org.fs.twitter.model.event
 
-import org.fs.mvp.common.EventType
+import org.fs.architecture.common.EventType
 import org.fs.twitter.model.Tweet
 
 class ShowTweetDetail(val tweet: Tweet) : EventType

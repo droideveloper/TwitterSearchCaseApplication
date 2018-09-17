@@ -13,18 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fs.twitter.common.component.activity
+package org.fs.twitter.common
 
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
-import org.fs.mvp.common.scope.ForActivity
-import org.fs.twitter.common.module.activity.TweetDetailActivityModule
-import org.fs.twitter.view.TweetDetailActivity
+import com.bumptech.glide.annotation.GlideModule
+import com.bumptech.glide.module.AppGlideModule
 
-@ForActivity
-@Subcomponent(modules = [TweetDetailActivityModule::class])
-interface TweetDetailActivityComponent: AndroidInjector<TweetDetailActivity> {
+@GlideModule
+class TwitterSearchCaseGlideModule: AppGlideModule() {
 
-  @Subcomponent.Builder
-  abstract class Builder: AndroidInjector.Builder<TweetDetailActivity>()
+  override fun isManifestParsingEnabled(): Boolean = false
 }

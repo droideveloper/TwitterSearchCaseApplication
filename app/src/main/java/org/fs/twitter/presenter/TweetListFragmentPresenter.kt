@@ -15,6 +15,6 @@
  */
 package org.fs.twitter.presenter
 
-import org.fs.mvp.common.PresenterType
+import org.fs.architecture.common.PresenterType
 
 interface TweetListFragmentPresenter : PresenterType

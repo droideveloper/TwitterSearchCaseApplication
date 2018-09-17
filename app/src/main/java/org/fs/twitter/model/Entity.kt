@@ -15,52 +15,10 @@
  */
 package org.fs.twitter.model
 
-import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import org.fs.mvp.core.AbstractEntity
+import kotlinx.android.parcel.Parcelize
 
-open class Entity private constructor() : AbstractEntity() {
-
-  var media: List<Media>? = null
-  @SerializedName("user_mentions") var userMentions: List<User>? = null
-
-  override fun readParcel(input: Parcel?) {
-    val hasMedia = input?.readInt() == 1
-    if (hasMedia) {
-      media = ArrayList()
-      input?.readTypedList(media, Media.CREATOR)
-    }
-    val hasUserMentions = input?.readInt() == 1
-    if (hasUserMentions) {
-      userMentions = ArrayList()
-      input?.readTypedList(userMentions, User.CREATOR)
-    }
-  }
-
-  override fun writeParcel(out: Parcel?, flags: Int) {
-    val hasMedia = media != null && media?.isEmpty() == false
-    out?.writeInt(if (hasMedia) 1 else 0)
-    media?.let {
-      out?.writeTypedList(it)
-    }
-    val hasUserMentions = userMentions != null && userMentions?.isEmpty() == false
-    out?.writeInt(if (hasUserMentions) 1 else 0)
-    userMentions?.let {
-      out?.writeTypedList(it)
-    }
-  }
-
-  companion object {
-    @JvmField val CREATOR = object : Parcelable.Creator<Entity> {
-
-      override fun createFromParcel(source: Parcel?): Entity {
-        val obj = Entity()
-        obj.readParcel(source)
-        return obj
-      }
-
-      override fun newArray(size: Int): Array<Entity?> = arrayOfNulls(size)
-    }
-  }
-}
+@Parcelize
+data class Entity(val media: List<Media>?,
+    @field:SerializedName("user_mentions") val userMentions: List<User>?): Parcelable
