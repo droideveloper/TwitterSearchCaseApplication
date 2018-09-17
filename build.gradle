@@ -1,19 +1,21 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  ext.supportVersion = '27.1.1'
-  ext.kotlinVersion = '1.2.70'
-  ext.daggerVersion = '2.14.1'
-  ext.reactiveAndroid = '2.0.1'
-  ext.reactiveJava = '2.1.1'
-  ext.glideVersion = '3.7.0'
-  ext.gsonVersion = '2.8.1'
-  ext.retrofitVersion = '2.3.0'
-  ext.okHttpInterceptorVersion = '3.6.0'
-  ext.constraintVersion = '1.1.3'
-  ext.glideVersion = "4.7.1"
-  ext.mvpVersion = '0.0.16'
-  ext.uiBindingVersion = '0.0.11'
+  ext {
+    supportVersion = '27.1.1'
+    kotlinVersion = '1.2.70'
+    daggerVersion = '2.14.1'
+    reactiveAndroid = '2.0.1'
+    reactiveJava = '2.1.1'
+    glideVersion = '3.7.0'
+    gsonVersion = '2.8.1'
+    retrofitVersion = '2.3.0'
+    okHttpInterceptorVersion = '3.6.0'
+    constraintVersion = '1.1.3'
+    glideVersion = "4.7.1"
+    mvpVersion = '0.0.16'
+    uiBindingVersion = '0.0.11'
+  }
   repositories {
     google()
     jcenter()
