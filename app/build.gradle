@@ -31,11 +31,9 @@ android {
 }
 
 dependencies {
-  api project(":mvp")
-  api project(":uibinding")
 
-  implementation fileTree(dir: 'libs', include: ['*.jar'])
-  implementation "com.android.support:appcompat-v7:$supportVersion"
+  implementation "org.fs.architecture:mvp:$mvpVersion"
+  implementation "org.fs.rx.extensions:uibinding:$uiBindingVersion"
 
   implementation "com.android.support.constraint:constraint-layout:$constraintVersion"
 

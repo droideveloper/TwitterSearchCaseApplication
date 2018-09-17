@@ -1,1 +1,1 @@
-include ':app', ':mvp', ':uibinding'
+include ':app'
