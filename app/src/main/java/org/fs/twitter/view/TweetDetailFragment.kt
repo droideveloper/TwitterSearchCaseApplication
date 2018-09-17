@@ -19,13 +19,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.view_tweet_detail_fragment.*
 import org.fs.architecture.core.AbstractFragment
 import org.fs.architecture.util.inflate
 import org.fs.twitter.R
-import org.fs.twitter.R.id.*
 import org.fs.twitter.common.GlideApp
 import org.fs.twitter.model.Tweet
 import org.fs.twitter.presenter.TweetDetailFragmentPresenter
