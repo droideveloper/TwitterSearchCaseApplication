@@ -39,11 +39,11 @@ class ProviderActivityModule {
   @Provides fun provideMainActivityView(activity: MainActivity): MainActivityView = activity
 
   @ForActivity @Provides fun provideNavigationType(activity: MainActivity): NavigationType<Tweet> {
-    val handset = activity.resources.getBoolean(R.bool.handset);
-    if (handset) {
-      return HandsetNavigation(activity)
+    val handset = activity.resources.getBoolean(R.bool.handset)
+    return if (handset) {
+      HandsetNavigation(activity)
     } else {
-      return TabletNavigation()
+      TabletNavigation()
     }
   }
 
