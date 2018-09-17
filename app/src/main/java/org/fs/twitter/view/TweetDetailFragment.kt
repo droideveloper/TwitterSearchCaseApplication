@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.view_tweet_detail_fragment.*
 import org.fs.architecture.core.AbstractFragment
 import org.fs.architecture.util.inflate
 import org.fs.twitter.R
+import org.fs.twitter.R.id.*
 import org.fs.twitter.common.GlideApp
 import org.fs.twitter.model.Tweet
 import org.fs.twitter.presenter.TweetDetailFragmentPresenter
@@ -33,12 +34,10 @@ import org.fs.twitter.presenter.TweetDetailFragmentPresenterImp
 class TweetDetailFragment : AbstractFragment<TweetDetailFragmentPresenter>(), TweetDetailFragmentView {
 
   companion object {
-    fun create(tweet: Tweet): TweetDetailFragment {
-      val args = Bundle()
-      args.putParcelable(TweetDetailFragmentPresenterImp.BUNDLE_ARGS_TWEET, tweet)
-      val fragment = TweetDetailFragment()
-      fragment.arguments = args
-      return fragment
+    fun create(tweet: Tweet): TweetDetailFragment  = TweetDetailFragment().apply {
+      arguments = Bundle().apply {
+        putParcelable(TweetDetailFragmentPresenterImp.BUNDLE_ARGS_TWEET, tweet)
+      }
     }
   }
 
