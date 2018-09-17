@@ -22,15 +22,13 @@ import org.fs.twitter.model.Tweet
 import org.fs.twitter.presenter.TweetDetailActivityPresenterImp
 import org.fs.twitter.view.TweetDetailActivity
 
-class HandsetNavigation(private val activtiy: Activity): NavigationType<Tweet> {
+class HandsetNavigation(private val activity: Activity): NavigationType<Tweet> {
 
   companion object {
     const val REQUEST_CODE_DETAIL = 0x09
   }
 
-  override fun onSelectCategory(tweet: Tweet?) {
-    val intent = Intent(activtiy, TweetDetailActivity::class.java)
-    intent.putExtra(TweetDetailActivityPresenterImp.BUNDLE_ARGS_TWEET, tweet)
-    activtiy.startActivityForResult(intent, REQUEST_CODE_DETAIL)
-  }
+  override fun onSelectCategory(tweet: Tweet?) = activity.startActivityForResult(Intent(activity, TweetDetailActivity::class.java).apply {
+    putExtra(TweetDetailActivityPresenterImp.BUNDLE_ARGS_TWEET, tweet)
+  }, REQUEST_CODE_DETAIL)
 }
