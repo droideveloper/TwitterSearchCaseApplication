@@ -70,7 +70,7 @@ class TweetListFragmentPresenterImp @Inject constructor(view: TweetListFragmentV
       }, { error -> error.printStackTrace() })
 
       disposeBag += view.loadMore()
-        .filter { it }
+        .filter { loadMore -> dataSet.isNotEmpty() && loadMore }
         .subscribe({ load(query, true) }, { error -> error.printStackTrace() })
 
       disposeBag += view.refreshes()

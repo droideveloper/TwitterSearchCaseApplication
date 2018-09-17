@@ -35,8 +35,7 @@ import org.fs.twitter.view.TweetDetailActivityView
 @Module
 class ProviderActivityModule {
 
-  @ForActivity
-  @Provides fun provideMainActivityView(activity: MainActivity): MainActivityView = activity
+  @ForActivity @Provides fun provideMainActivityView(activity: MainActivity): MainActivityView = activity
 
   @ForActivity @Provides fun provideNavigationType(activity: MainActivity): NavigationType<Tweet> {
     val handset = activity.resources.getBoolean(R.bool.handset)
@@ -49,7 +48,6 @@ class ProviderActivityModule {
 
   @ForActivity @Provides fun provideMainActivityPresenter(view: MainActivityView, navigationType: NavigationType<Tweet>): MainActivityPresenter = MainActivityPresenterImp(view, navigationType)
 
-  @ForActivity
-  @Provides fun provideTweetDetailActivityView(activity: TweetDetailActivity): TweetDetailActivityView = activity
+  @ForActivity @Provides fun provideTweetDetailActivityView(activity: TweetDetailActivity): TweetDetailActivityView = activity
   @ForActivity @Provides fun provideTweetDetailActivityPrenseter(view: TweetDetailActivityView): TweetDetailActivityPresenter = TweetDetailActivityPresenterImp(view)
 }
