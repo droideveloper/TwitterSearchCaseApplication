@@ -15,19 +15,31 @@
  */
 package org.fs.twitter.common.module.activity
 
+import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import org.fs.architecture.common.scope.ForActivity
 import org.fs.architecture.common.scope.ForFragment
+import org.fs.twitter.common.module.fragment.FragmentModule
 import org.fs.twitter.common.module.fragment.ProviderFragmentModule
-import org.fs.twitter.view.TweetDetailFragment
-import org.fs.twitter.view.TweetListFragment
+import org.fs.twitter.presenter.MainActivityPresenter
+import org.fs.twitter.presenter.MainActivityPresenterImp
+import org.fs.twitter.presenter.TweetDetailActivityPresenter
+import org.fs.twitter.presenter.TweetDetailActivityPresenterImp
+import org.fs.twitter.view.*
 
 @Module
 abstract class ActivityModule {
 
-  @ForFragment @ContributesAndroidInjector(modules = [ProviderFragmentModule::class])
+  @ForActivity @Binds abstract fun bindMainActivityView(activity: MainActivity): MainActivityView
+  @ForActivity @Binds abstract fun bindMainActivityPresenter(presenter: MainActivityPresenterImp): MainActivityPresenter
+
+  @ForActivity @Binds abstract fun bindTweetDetailActivityView(activity: TweetDetailActivity): TweetDetailActivityView
+  @ForActivity @Binds abstract fun bindTweetDetailActivityPresenter(presenter: TweetDetailActivityPresenterImp): TweetDetailActivityPresenter
+
+  @ForFragment @ContributesAndroidInjector(modules = [FragmentModule::class, ProviderFragmentModule::class])
   abstract fun bindTweetListFragment(): TweetListFragment
 
-  @ForFragment @ContributesAndroidInjector(modules = [ProviderFragmentModule::class])
+  @ForFragment @ContributesAndroidInjector(modules = [FragmentModule::class, ProviderFragmentModule::class])
   abstract fun bindTweetDetailFragment(): TweetDetailFragment
 }

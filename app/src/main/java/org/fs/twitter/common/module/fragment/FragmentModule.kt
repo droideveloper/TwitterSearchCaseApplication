@@ -1,5 +1,5 @@
 /*
- * Twitter Search Case Application Copyright (C) 2018 Fatih.
+ * MVI App Copyright (C) 2018 Fatih.
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,9 @@
  */
 package org.fs.twitter.common.module.fragment
 
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import org.fs.architecture.common.scope.ForFragment
-import org.fs.architecture.util.ObservableList
-import org.fs.twitter.model.Tweet
 import org.fs.twitter.presenter.TweetDetailFragmentPresenter
 import org.fs.twitter.presenter.TweetDetailFragmentPresenterImp
 import org.fs.twitter.presenter.TweetListFragmentPresenter
@@ -30,13 +28,13 @@ import org.fs.twitter.view.TweetListFragment
 import org.fs.twitter.view.TweetListFragmentView
 
 @Module
-class ProviderFragmentModule {
+abstract class FragmentModule {
 
-  //@ForFragment @Provides fun provideTweetListFragmentView(fragment: TweetListFragment): TweetListFragmentView = fragment
-  //@ForFragment @Provides fun provideTweetListFragmentPresenter(presenter: TweetListFragmentPresenterImp): TweetListFragmentPresenter = presenter
+  @ForFragment @Binds abstract fun bindTweetFragmentListView(fragment: TweetListFragment): TweetListFragmentView
+  @ForFragment @Binds abstract fun bindTweetFragmentListPresenter(presenter: TweetListFragmentPresenterImp): TweetListFragmentPresenter
 
-  @ForFragment @Provides fun provideDataSet(): ObservableList<Tweet> = ObservableList()
+  //@ForFragment @Provides fun provideDataSet(): ObservableList<Tweet> = ObservableList()
 
-  //@ForFragment @Provides fun provideTweetDetailFragmentView(fragment: TweetDetailFragment): TweetDetailFragmentView = fragment
-  //@ForFragment @Provides fun provideTweetDetailFragmentPresenter(presenter: TweetDetailFragmentPresenterImp): TweetDetailFragmentPresenter = presenter
+  @ForFragment @Binds abstract fun bindTweetDetailFragmentView(fragment: TweetDetailFragment): TweetDetailFragmentView
+  @ForFragment @Binds abstract fun bindTweetDetailFragmentPresenter(presenter: TweetDetailFragmentPresenterImp): TweetDetailFragmentPresenter
 }
