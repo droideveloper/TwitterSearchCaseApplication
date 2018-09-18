@@ -20,23 +20,10 @@ import dagger.Provides
 import org.fs.architecture.common.scope.ForFragment
 import org.fs.architecture.util.ObservableList
 import org.fs.twitter.model.Tweet
-import org.fs.twitter.presenter.TweetDetailFragmentPresenter
-import org.fs.twitter.presenter.TweetDetailFragmentPresenterImp
-import org.fs.twitter.presenter.TweetListFragmentPresenter
-import org.fs.twitter.presenter.TweetListFragmentPresenterImp
-import org.fs.twitter.view.TweetDetailFragment
-import org.fs.twitter.view.TweetDetailFragmentView
-import org.fs.twitter.view.TweetListFragment
-import org.fs.twitter.view.TweetListFragmentView
 
 @Module
 class ProviderFragmentModule {
 
-  //@ForFragment @Provides fun provideTweetListFragmentView(fragment: TweetListFragment): TweetListFragmentView = fragment
-  //@ForFragment @Provides fun provideTweetListFragmentPresenter(presenter: TweetListFragmentPresenterImp): TweetListFragmentPresenter = presenter
-
   @ForFragment @Provides fun provideDataSet(): ObservableList<Tweet> = ObservableList()
 
-  //@ForFragment @Provides fun provideTweetDetailFragmentView(fragment: TweetDetailFragment): TweetDetailFragmentView = fragment
-  //@ForFragment @Provides fun provideTweetDetailFragmentPresenter(presenter: TweetDetailFragmentPresenterImp): TweetDetailFragmentPresenter = presenter
 }
