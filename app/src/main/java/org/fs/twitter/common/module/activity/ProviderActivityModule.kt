@@ -23,14 +23,7 @@ import org.fs.twitter.R
 import org.fs.twitter.common.HandsetNavigation
 import org.fs.twitter.common.TabletNavigation
 import org.fs.twitter.model.Tweet
-import org.fs.twitter.presenter.MainActivityPresenter
-import org.fs.twitter.presenter.MainActivityPresenterImp
-import org.fs.twitter.presenter.TweetDetailActivityPresenter
-import org.fs.twitter.presenter.TweetDetailActivityPresenterImp
 import org.fs.twitter.view.MainActivity
-import org.fs.twitter.view.MainActivityView
-import org.fs.twitter.view.TweetDetailActivity
-import org.fs.twitter.view.TweetDetailActivityView
 
 @Module
 class ProviderActivityModule {
